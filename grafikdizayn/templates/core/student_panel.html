@@ -1,0 +1,63 @@
+{% extends "core/base.html" %}
+{% block title %}Mening balim{% endblock %}
+{% block content %}
+<h1>Salom, {{ user.get_full_name|default:user.username }} 👋</h1>
+
+<div class="card">
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="muted">Umumiy to'plangan ball</div>
+      <div class="score">{{ profile.total_score }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="muted">Guruh</div>
+      <div style="font-size:20px;font-weight:800;margin-top:6px;">{{ profile.group.name|default:"—" }}</div>
+    </div>
+    <div class="stat-box">
+      <div class="muted">Vazifa qilinmagan kunlar</div>
+      <div style="font-size:28px;font-weight:800;margin-top:2px;" class="{% if profile.missed_homework_count > 0 %}pill-danger{% endif %}">{{ profile.missed_homework_count }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+  <div>
+    <h3 style="margin:0;">📞 Domla bilan bog'lanish</h3>
+    {% if teacher %}<p class="muted" style="margin:4px 0 0;">{{ teacher.get_full_name|default:teacher.username }}{% if teacher_phone %} · {{ teacher_phone }}{% endif %}</p>{% endif %}
+  </div>
+  {% if teacher_tel %}
+    <a class="btn btn-success" href="tel:{{ teacher_tel }}">📞 Qo'ng'iroq qilish</a>
+  {% else %}
+    <span class="pill pill-warn">Domla raqami kiritilmagan</span>
+  {% endif %}
+</div>
+
+<div class="card">
+  <h3>📅 Kunlik tarix</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Sana</th><th>Davomat</th><th>Uy vazifasi</th><th>Qo'shimcha</th><th>Kun bali</th></tr>
+    {% for r in records %}
+    <tr>
+      <td>{{ r.date|date:"d.m.Y" }}</td>
+      <td>
+        {% if r.attendance_status == 'bor' %}<span class="pill pill-success">Bor</span>
+        {% elif r.attendance_status == 'yuq' %}<span class="pill pill-danger">Yo'q</span>
+        {% else %}<span class="muted">-</span>{% endif %}
+      </td>
+      <td>
+        {% if r.homework_status == 'bor' %}<span class="pill pill-success">Bor</span>
+        {% elif r.homework_status == 'chala' %}<span class="pill pill-warn">Chala{% if r.homework_percent is not None %} ({{ r.homework_percent }}%){% endif %}</span>
+        {% elif r.homework_status == 'yuq' %}<span class="pill pill-danger">Bajarilmagan</span>
+        {% else %}<span class="muted">-</span>{% endif %}
+      </td>
+      <td>{{ r.extra_points }}</td>
+      <td><strong>{{ r.day_total }}</strong></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="muted">Hali yozuv yo'q.</td></tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endblock %}

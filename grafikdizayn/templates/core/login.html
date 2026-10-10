@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block title %}Kirish{% endblock %}
+{% block content %}
+<div style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding-top:20px;">
+  <div class="card" style="max-width:400px;width:100%;padding:34px 30px;box-shadow:var(--shadow-lg);">
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="font-size:40px;line-height:1;margin-bottom:8px;">🎓</div>
+      <h2 style="margin-bottom:4px;">Tizimga kirish</h2>
+      <p class="muted" style="margin:0;">Maktab bal tizimiga xush kelibsiz</p>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <label>Login</label>
+      {{ form.username }}
+      <label>Parol</label>
+      {{ form.password }}
+      {% if form.errors %}
+        <p style="color:var(--danger-dark);font-size:13px;font-weight:700;margin:-4px 0 12px;">⚠️ Login yoki parol noto'g'ri.</p>
+      {% endif %}
+      <button class="btn" type="submit" style="width:100%;justify-content:center;margin-top:6px;">Kirish</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

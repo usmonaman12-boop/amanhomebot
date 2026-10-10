@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Maktab bal tizimi{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f8fc;
+    --surface:#ffffff;
+    --text:#101828;
+    --muted:#667085;
+    --border:#e6e8f0;
+
+    --primary:#4f39f6;
+    --primary-2:#7c3aed;
+    --primary-dark:#3c2bd6;
+    --primary-soft:#eef0ff;
+
+    --success:#059669;
+    --success-dark:#047857;
+    --success-soft:#e7f8f1;
+
+    --danger:#e11d48;
+    --danger-dark:#be123c;
+    --danger-soft:#fdecef;
+
+    --warn:#d97706;
+    --warn-dark:#b45309;
+    --warn-soft:#fef3e2;
+
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow-sm:0 1px 2px rgba(16,24,40,.06);
+    --shadow-md:0 4px 14px -4px rgba(16,24,40,.12), 0 2px 6px -2px rgba(16,24,40,.06);
+    --shadow-lg:0 20px 40px -14px rgba(79,57,246,.22), 0 4px 10px -4px rgba(16,24,40,.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 480px at 8% -8%, #eef0ff 0%, rgba(238,240,255,0) 60%),
+      radial-gradient(900px 420px at 100% 0%, #f3e8ff 0%, rgba(243,232,255,0) 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:"Inter","Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    line-height:1.55;
+    font-weight:700;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:"Manrope","Inter",sans-serif;
+    color:var(--text);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin:0 0 6px;
+  }
+  h1{font-size:26px;margin-bottom:18px;}
+  h3{font-size:16px;}
+  p{margin:0 0 10px;}
+
+  /* ---------- header ---------- */
+  header{
+    background:linear-gradient(115deg,var(--primary) 0%,var(--primary-2) 100%);
+    color:#fff;
+    padding:16px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:0 6px 24px -10px rgba(79,57,246,.55);
+  }
+  header a.brand{
+    color:#fff;
+    text-decoration:none;
+    font-family:"Manrope",sans-serif;
+    font-weight:800;
+    font-size:17px;
+    letter-spacing:-0.01em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  header .nav-right{display:flex;gap:16px;align-items:center;font-size:14px;}
+  header .nav-right .who{
+    background:rgba(255,255,255,.16);
+    padding:6px 14px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:13px;
+  }
+  header .nav-right a{
+    color:#fff;
+    text-decoration:none;
+    font-weight:700;
+    opacity:.92;
+    padding:7px 4px;
+    border-bottom:2px solid transparent;
+    transition:.15s;
+  }
+  header .nav-right a:hover{opacity:1;border-color:rgba(255,255,255,.7);}
+
+  main{max-width:1040px;margin:0 auto;padding:30px 20px 70px;}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 22px;
+    margin-bottom:20px;
+    box-shadow:var(--shadow-sm);
+  }
+  .card h3{margin-bottom:14px;}
+
+  /* ---------- table ---------- */
+  .table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;background:var(--surface);font-size:14px;}
+  th,td{padding:12px 14px;text-align:left;}
+  th{
+    background:var(--primary-soft);
+    color:var(--primary-dark);
+    font-weight:800;
+    font-size:12.5px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    border-bottom:1px solid var(--border);
+  }
+  td{border-bottom:1px solid var(--border);color:var(--text);font-weight:600;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafaff;}
+
+  /* ---------- inputs ---------- */
+  .input{
+    width:100%;
+    padding:11px 13px;
+    border:1.5px solid var(--border);
+    border-radius:var(--radius-sm);
+    background:#fff;
+    color:var(--text);
+    font-size:14px;
+    font-weight:600;
+    font-family:inherit;
+    margin-bottom:12px;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .input:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px var(--primary-soft);
+  }
+  label{font-size:12.5px;font-weight:800;color:var(--muted);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.03em;}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:11px 20px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:800;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(120deg,var(--primary),var(--primary-2));
+    box-shadow:var(--shadow-sm);
+    transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    font-family:inherit;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);filter:brightness(1.04);}
+  .btn:active{transform:translateY(0);}
+  .btn-danger{background:linear-gradient(120deg,var(--danger),var(--danger-dark));}
+  .btn-success{background:linear-gradient(120deg,var(--success),var(--success-dark));}
+  .btn-warn{background:linear-gradient(120deg,var(--warn),var(--warn-dark));}
+  .btn-ghost{
+    background:var(--surface);
+    color:var(--primary-dark);
+    border:1.5px solid var(--border);
+    box-shadow:none;
+  }
+  .btn-ghost:hover{border-color:var(--primary);background:var(--primary-soft);}
+  .btn-sm{padding:6px 13px;font-size:12.5px;}
+  .btn-group{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+
+  /* ---------- choice pills (radio-as-button) ---------- */
+  .radio-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+  .radio-btns label{
+    border:1.5px solid var(--border);
+    border-radius:999px;
+    padding:8px 15px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:700;
+    color:var(--text);
+    background:#fff;
+    transition:.15s;
+  }
+  .radio-btns label:hover{border-color:var(--primary);}
+  .radio-btns input{position:absolute;opacity:0;width:0;height:0;}
+  .radio-selected{
+    background:linear-gradient(120deg,var(--primary),var(--primary-2)) !important;
+    color:#fff !important;
+    border-color:transparent !important;
+    box-shadow:var(--shadow-sm);
+  }
+
+  /* ---------- messages ---------- */
+  .messages{list-style:none;padding:0;margin:0 0 20px;}
+  .messages li{
+    padding:12px 16px;
+    border-radius:var(--radius-sm);
+    background:var(--success-soft);
+    border:1px solid #b7ecd6;
+    color:var(--success-dark);
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:700;
+  }
+
+  .muted{color:var(--muted);font-size:13px;font-weight:600;}
+
+  /* ---------- misc ---------- */
+  .score{
+    font-size:44px;
+    font-weight:800;
+    font-family:"Manrope",sans-serif;
+    background:linear-gradient(120deg,var(--primary),var(--primary-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    line-height:1.1;
+  }
+  .pill{
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    background:#eef0f4;
+    color:#3b3f4a;
+  }
+  .pill-success{background:var(--success-soft);color:var(--success-dark);}
+  .pill-warn{background:var(--warn-soft);color:var(--warn-dark);}
+  .pill-danger{background:var(--danger-soft);color:var(--danger-dark);}
+  .pill-primary{background:var(--primary-soft);color:var(--primary-dark);}
+
+  a.link{color:var(--primary);font-weight:700;text-decoration:none;}
+  a.link:hover{text-decoration:underline;}
+
+  .grid-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:4px;}
+  .group-card{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+    text-decoration:none;
+    color:var(--text);
+    background:var(--surface);
+    box-shadow:var(--shadow-sm);
+    transition:transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .group-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:transparent;}
+  .group-card strong{font-size:16px;font-family:"Manrope",sans-serif;}
+
+  code{background:var(--primary-soft);color:var(--primary-dark);padding:3px 8px;border-radius:6px;font-weight:800;}
+
+  .stat-row{display:flex;gap:16px;flex-wrap:wrap;}
+  .stat-box{
+    flex:1;
+    min-width:150px;
+    text-align:center;
+    padding:18px 10px;
+  }
+
+  form{margin:0;}
+
+  ::selection{background:var(--primary-soft);color:var(--primary-dark);}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="{% url 'dashboard' %}">🎓 Maktab bal tizimi</a>
+  <div class="nav-right">
+    {% if user.is_authenticated %}
+      <span class="who">{{ user.get_full_name|default:user.username }} · {{ user.get_role_display }}</span>
+      <a href="{% url 'logout' %}">Chiqish</a>
+    {% endif %}
+  </div>
+</header>
+<main>
+  {% if messages %}
+  <ul class="messages">
+    {% for m in messages %}<li>✅ {{ m }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

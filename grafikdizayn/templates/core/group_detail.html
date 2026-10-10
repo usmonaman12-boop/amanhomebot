@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<p><a class="link" href="{% url 'teacher_panel' %}">&larr; Guruhlar</a></p>
+<h1>{{ group.name }}</h1>
+
+<div class="btn-group">
+  <a class="btn" href="{% url 'daily_session' group.id %}">📝 Bugungi baholash</a>
+  <a class="btn btn-warn" href="{% url 'group_link_info' group.id %}">🔗 Telegramga ulash</a>
+  <form method="post" action="{% url 'group_recalculate' group.id %}" onsubmit="return confirm('Bu guruhdagi barcha o\'quvchilarning ballari qayta hisoblansinmi?');">
+    {% csrf_token %}
+    <button class="btn btn-ghost" type="submit">🔄 Ballarni yangilash</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>➕ O'quvchi qo'shish</h3>
+  <form method="post">
+    {% csrf_token %}
+    <label>Login</label>{{ form.username }}
+    <label>Ism</label>{{ form.first_name }}
+    <label>Familiya</label>{{ form.last_name }}
+    {% if form.non_field_errors %}<p style="color:var(--danger-dark);font-weight:700;">⚠️ {{ form.non_field_errors.0 }}</p>{% endif %}
+    {% for e in form.username.errors %}<p style="color:var(--danger-dark);font-weight:700;">⚠️ {{ e }}</p>{% endfor %}
+    <label>O'quvchining o'z raqami</label>{{ form.phone }}
+    <label>Otasining raqami</label>{{ form.father_phone }}
+    <label>Onasining raqami</label>{{ form.mother_phone }}
+    <p class="muted" style="margin:-4px 0 12px;">Kamida bittasini kiriting — qolganlari majburiy emas.</p>
+    <label>Parol</label>{{ form.password }}
+    <button class="btn btn-success" type="submit">O'quvchi qo'shish</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>👥 O'quvchilar ({{ students.count }})</h3>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Ism familiya</th><th>Login</th><th>Telefonlar</th><th>Umumiy bal</th><th>Vazifa qilinmagan kunlar</th><th></th></tr>
+    {% for sp in students %}
+    <tr>
+      <td>{{ sp.user.get_full_name|default:"-" }}</td>
+      <td>{{ sp.user.username }}</td>
+      <td style="font-size:12.5px;line-height:1.6;">
+        {% if sp.user.phone %}<div>👤 <a class="link" href="tel:{{ sp.user.phone }}">{{ sp.user.phone }}</a></div>{% endif %}
+        {% if sp.father_phone %}<div>👨 <a class="link" href="tel:{{ sp.father_phone }}">{{ sp.father_phone }}</a></div>{% endif %}
+        {% if sp.mother_phone %}<div>👩 <a class="link" href="tel:{{ sp.mother_phone }}">{{ sp.mother_phone }}</a></div>{% endif %}
+        {% if not sp.user.phone and not sp.father_phone and not sp.mother_phone %}<span class="muted">-</span>{% endif %}
+      </td>
+      <td><strong class="pill pill-primary">{{ sp.total_score }}</strong></td>
+      <td>{% if sp.missed_homework_count > 0 %}<span class="pill pill-danger">{{ sp.missed_homework_count }}</span>{% else %}<span class="muted">0</span>{% endif %}</td>
+      <td>
+        <form method="post" action="{% url 'group_delete_student' group.id sp.id %}" onsubmit="return confirm('\'{{ sp.user.get_full_name|default:sp.user.username }}\' rostdan ham o\'chirilsinmi? Bu amalni orqaga qaytarib bo\'lmaydi.');">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm" type="submit">O'chirish</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" class="muted">Hali o'quvchi yo'q.</td></tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endblock %}

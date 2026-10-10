@@ -1,0 +1,95 @@
+{% extends "core/base.html" %}
+{% block title %}Bugungi baholash{% endblock %}
+{% block content %}
+<p><a class="link" href="{% url 'group_detail' group.id %}">&larr; {{ group.name }}</a></p>
+<h1>{{ group.name }} — {{ today|date:"d.m.Y" }}</h1>
+<p class="muted">Davomat: Bor = +3 ball (avtomatik). Uy vazifasi: Bor = +5, Chala = foiz kiritiladi (100% = 8 ball), Yo'q = +0 (va "vazifa qilinmadi" hisoblanadi). Qo'shimcha ball xohlaganingizcha kiritishingiz mumkin.</p>
+
+<form method="post" id="dayform">
+  {% csrf_token %}
+  {% for sp, rec in rows %}
+  <div class="card">
+    <h3 style="margin-top:0;">{{ sp.user.get_full_name|default:sp.user.username }} <span class="pill pill-primary">Umumiy: {{ sp.total_score }}</span></h3>
+
+    <label>Davomat</label>
+    <div class="radio-btns btnrow" data-name="attendance_{{ sp.user.id }}">
+      <label class="{% if rec.attendance_status == 'bor' %}radio-selected{% endif %}">
+        <input type="radio" name="attendance_{{ sp.user.id }}" value="bor" {% if rec.attendance_status == 'bor' %}checked{% endif %}> Bor (+3)
+      </label>
+      <label class="{% if rec.attendance_status == 'yuq' %}radio-selected{% endif %}">
+        <input type="radio" name="attendance_{{ sp.user.id }}" value="yuq" {% if rec.attendance_status == 'yuq' %}checked{% endif %}> Yo'q
+      </label>
+    </div>
+
+    <label>Uy vazifasi</label>
+    <div class="radio-btns btnrow" data-name="homework_{{ sp.user.id }}">
+      <label class="{% if rec.homework_status == 'bor' %}radio-selected{% endif %}">
+        <input type="radio" name="homework_{{ sp.user.id }}" value="bor" {% if rec.homework_status == 'bor' %}checked{% endif %}> Bor (+5)
+      </label>
+      <label class="{% if rec.homework_status == 'chala' %}radio-selected{% endif %}">
+        <input type="radio" name="homework_{{ sp.user.id }}" value="chala" {% if rec.homework_status == 'chala' %}checked{% endif %}> Chala (foiz)
+      </label>
+      <label class="{% if rec.homework_status == 'yuq' %}radio-selected{% endif %}">
+        <input type="radio" name="homework_{{ sp.user.id }}" value="yuq" {% if rec.homework_status == 'yuq' %}checked{% endif %}> Yo'q (0)
+      </label>
+    </div>
+
+    <div class="percent-box" data-uid="{{ sp.user.id }}" style="{% if rec.homework_status != 'chala' %}display:none;{% endif %}">
+      <label>Necha foiz bajarilgan? (100% = 8 ball)</label>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <input class="input percent-input" style="max-width:140px;margin-bottom:0;" type="number" min="0" max="100" placeholder="masalan 50"
+               name="percent_{{ sp.user.id }}" value="{{ rec.homework_percent|default_if_none:'' }}">
+        <span class="pill pill-warn percent-preview"></span>
+      </div>
+      <div style="height:12px"></div>
+    </div>
+
+    <label>Qo'shimcha ball</label>
+    <input class="input" style="max-width:140px;" type="number" name="extra_{{ sp.user.id }}" value="{{ rec.extra_points|default:0 }}">
+  </div>
+  {% empty %}
+  <p class="muted">Bu guruhda o'quvchi yo'q.</p>
+  {% endfor %}
+
+  {% if rows %}
+  <button class="btn btn-success" type="submit" style="font-size:16px;padding:12px 28px;">✅ Tayyor — saqlash va yuborish</button>
+  {% endif %}
+</form>
+
+<script>
+function updatePreview(box){
+  var inp = box.querySelector('.percent-input');
+  var out = box.querySelector('.percent-preview');
+  if(inp.value === ''){ out.textContent = ''; return; }
+  var p = Math.max(0, Math.min(100, parseInt(inp.value, 10) || 0));
+  out.textContent = '= ' + Math.floor(p * 8 / 100 + 0.5) + ' ball';
+}
+document.querySelectorAll('.percent-box').forEach(function(box){
+  box.querySelector('.percent-input').addEventListener('input', function(){ updatePreview(box); });
+  updatePreview(box);
+});
+document.querySelectorAll('input[type=radio][name^="homework_"]').forEach(function(radio){
+  radio.addEventListener('change', function(){
+    var uid = radio.name.split('_')[1];
+    var box = document.querySelector('.percent-box[data-uid="' + uid + '"]');
+    if(box){ box.style.display = (radio.value === 'chala' && radio.checked) ? '' : 'none'; }
+  });
+});
+document.querySelectorAll('.btnrow').forEach(function(row){
+  row.querySelectorAll('input[type=radio]').forEach(function(input){
+    input.addEventListener('change', function(){
+      row.querySelectorAll('label').forEach(function(l){ l.classList.remove('radio-selected'); });
+      input.closest('label').classList.add('radio-selected');
+    });
+  });
+});
+</script>
+
+<style>
+  .radio-selected{
+    background:var(--primary) !important;
+    color:#fff !important;
+    border-color:var(--primary) !important;
+  }
+</style>
+{% endblock %}

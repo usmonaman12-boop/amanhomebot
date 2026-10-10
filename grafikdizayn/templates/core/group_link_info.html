@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}Telegramga ulash{% endblock %}
+{% block content %}
+<p><a class="link" href="{% url 'group_detail' group.id %}">&larr; {{ group.name }}</a></p>
+<h1>🔗 Telegram guruhiga ulash</h1>
+
+<div class="card">
+  <p>Ballar avtomatik yuborilishi uchun quyidagilarni bajaring:</p>
+  <ol style="padding-left:20px;">
+    <li style="margin-bottom:6px;">Botni telegram guruhingizga qo'shing.</li>
+    <li>Guruhda quyidagi buyruqni yuboring:</li>
+  </ol>
+  <p style="font-size:22px;margin:14px 0;"><code>/link {{ group.telegram_link_code }}</code></p>
+  <p class="muted">Bu kod faqat "{{ group.name }}" guruhiga tegishli. Buyruq yuborilgach bot javob beradi va shu guruh Telegram chatiga bog'lanadi.</p>
+  {% if group.telegram_chat_id %}
+    <p><span class="pill pill-success">✅ Bu guruh Telegram bilan ulangan</span></p>
+  {% else %}
+    <p><span class="pill pill-warn">⏳ Hali ulanmagan</span></p>
+  {% endif %}
+</div>
+{% endblock %}

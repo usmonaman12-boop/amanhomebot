@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% block title %}O'qituvchi paneli{% endblock %}
+{% block content %}
+<h1>Mening guruhlarim</h1>
+
+<div class="card">
+  <h3>➕ Yangi guruh yaratish</h3>
+  <form method="post" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+    {% csrf_token %}
+    <div style="flex:1;min-width:220px;margin-bottom:0;">{{ form.name }}</div>
+    <button class="btn btn-success" type="submit" style="margin-bottom:12px;">Guruh yaratish</button>
+  </form>
+</div>
+
+<div class="card">
+  <h3>📱 Mening telefon raqamim</h3>
+  <p class="muted">O'quvchilar panelidagi "Qo'ng'iroq qilish" tugmasi shu raqamni ochadi.</p>
+  <form method="post" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;">
+    {% csrf_token %}
+    <input type="hidden" name="save_phone" value="1">
+    <div style="flex:1;min-width:220px;"><input class="input" type="text" name="phone" value="{{ request.user.phone }}" placeholder="+998 90 123 45 67"></div>
+    <button class="btn" type="submit" style="margin-bottom:12px;">Saqlash</button>
+  </form>
+</div>
+
+<div class="grid-groups">
+{% for g in groups %}
+  <a class="group-card" href="{% url 'group_detail' g.id %}">
+    <strong>{{ g.name }}</strong>
+    <span class="pill pill-primary">{{ g.student_count }} o'quvchi</span>
+    {% if g.telegram_chat_id %}
+      <span class="pill pill-success">✅ Telegram ulangan</span>
+    {% else %}
+      <span class="pill pill-warn">⏳ Telegram ulanmagan</span>
+    {% endif %}
+  </a>
+{% empty %}
+  <p class="muted">Hali guruh yo'q. Yuqoridan yangi guruh yarating.</p>
+{% endfor %}
+</div>
+{% endblock %}

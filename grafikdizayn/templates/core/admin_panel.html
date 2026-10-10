@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+{% block title %}Admin panel{% endblock %}
+{% block content %}
+<h1>Admin panel</h1>
+
+<div class="card">
+  <h3>➕ Yangi o'qituvchi qo'shish</h3>
+  <form method="post">
+    {% csrf_token %}
+    <label>Login (username)</label>{{ form.username }}
+    <label>Ism</label>{{ form.first_name }}
+    <label>Familiya</label>{{ form.last_name }}
+    <label>Telefon</label>{{ form.phone }}
+    <label>Parol</label>{{ form.password }}
+    <button class="btn btn-success" type="submit">O'qituvchi qo'shish</button>
+  </form>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+    <h3 style="margin:0;">👩‍🏫 O'qituvchilar ro'yxati</h3>
+    <form method="post" action="{% url 'admin_recalculate_all' %}" onsubmit="return confirm('Barcha o\'quvchilarning ballari qayta hisoblansinmi?');">
+      {% csrf_token %}
+      <button class="btn btn-ghost btn-sm" type="submit">🔄 Hamma ballarni yangilash</button>
+    </form>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Ism familiya</th><th>Login</th><th>Telefon</th><th>Guruhlari</th><th></th></tr>
+    {% for t in teachers %}
+    <tr>
+      <td>{{ t.get_full_name|default:"-" }}</td>
+      <td>{{ t.username }}</td>
+      <td>{{ t.phone|default:"-" }}</td>
+      <td>{{ t.taught_groups.count }}</td>
+      <td>
+        <form method="post" action="{% url 'admin_delete_teacher' t.id %}" onsubmit="return confirm('O\'chirilsinmi?');">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm" type="submit">O'chirish</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="muted">Hali o'qituvchi yo'q.</td></tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endblock %}
