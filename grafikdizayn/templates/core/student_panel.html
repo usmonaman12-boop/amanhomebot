@@ -47,7 +47,7 @@
       </td>
       <td>
         {% if r.homework_status == 'bor' %}<span class="pill pill-success">Bor</span>
-        {% elif r.homework_status == 'chala' %}<span class="pill pill-warn">Chala{% if r.homework_percent is not None %} ({{ r.homework_percent }}%){% endif %}</span>
+        {% elif r.homework_status == 'chala' %}<span class="pill pill-warn">Chala ({{ r.homework_points }} ball)</span>
         {% elif r.homework_status == 'yuq' %}<span class="pill pill-danger">Bajarilmagan</span>
         {% else %}<span class="muted">-</span>{% endif %}
       </td>

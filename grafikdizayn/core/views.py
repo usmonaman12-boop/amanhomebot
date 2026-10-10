@@ -208,21 +208,20 @@ def daily_session(request, group_id):
 
             was_hw_missing_before = rec.homework_status == DailyRecord.HW_YUQ
 
-            percent_raw = request.POST.get(f"percent_{sp.user.id}", "").strip()
+            chala_raw = request.POST.get(f"chala_{sp.user.id}", "").strip()
             try:
-                percent = max(0, min(100, int(percent_raw))) if percent_raw else None
+                chala_points = max(0, int(chala_raw)) if chala_raw else None
             except ValueError:
-                percent = None
+                chala_points = None
 
             attendance_points = 3 if attendance == DailyRecord.ATTEND_BOR else 0
             if homework == DailyRecord.HW_BOR:
                 homework_points = 5
             elif homework == DailyRecord.HW_CHALA:
-                if percent is not None:
-                    # 100% = 8 ball; yarimidan yuqori kasr yuqoriga yaxlitlanadi
-                    homework_points = int(percent * 8 / 100 + 0.5)
+                if chala_points is not None:
+                    homework_points = chala_points  # domla o'zi kiritgan ball
                 else:
-                    homework_points = 3  # foiz kiritilmasa eski qoida (3 ball)
+                    homework_points = 3  # ball kiritilmasa eski qoida (3 ball)
             elif homework == DailyRecord.HW_YUQ:
                 homework_points = 0
             else:
@@ -234,7 +233,7 @@ def daily_session(request, group_id):
             rec.attendance_points = attendance_points
             rec.homework_status = homework
             rec.homework_points = homework_points
-            rec.homework_percent = percent if homework == DailyRecord.HW_CHALA else None
+            rec.homework_percent = None  # endi foiz ishlatilmaydi (eski yozuvlarda saqlanib qoladi)
             rec.extra_points = extra
             rec.finalized = True
             rec.save()
